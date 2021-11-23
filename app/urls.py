@@ -21,4 +21,9 @@ urlpatterns = [
     path('', include('creators.urls')),
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
+
+    # This will made the following paths available:
+    #   /api-auth/login/
+    #   /api-auth/logout/
+    path('api-auth/', include('rest_framework.urls')),
 ]

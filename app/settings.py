@@ -42,6 +42,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    # Third-party apps
+    'rest_framework',
+
+    # Local apps
     'creators',
 ]
 
@@ -134,3 +138,17 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Fix login page redirect
 LOGIN_REDIRECT_URL = '/'
+
+# This will make viewsets login required
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+}
+
+if DEBUG:
+    # This is how clients, like Thunder Client, will be able to log in.
+    # A fucking custom middleware, skipping CSRF validation.
+    MIDDLEWARE.append('creators.utils.DisableCSRFMiddleware')
+
+print(MIDDLEWARE)

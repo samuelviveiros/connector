@@ -7,6 +7,9 @@ from .views import (
     register_creator,
     CreatorViewSet,
     CustomEndpoint,
+    ChatHistoryRequest,
+    ChatHistoryResponse,
+    TelegramSendMessage,
 )
 
 app_name = 'creators'
@@ -20,4 +23,7 @@ urlpatterns = [
     path('register_creator/', register_creator, name='register_creator'),
     path('v1/', include(router.urls)),
     path('v1/custom-endpoint/', CustomEndpoint.as_view(), name='custom-endpoint'),
+    path('v1/telegram/chat-history-request/<str:phone>/', ChatHistoryRequest.as_view(), name='chat-history-request'),
+    path('v1/telegram/chat-history-response/<str:phone>/', ChatHistoryResponse.as_view(), name='chat-history-response'),
+    path('v1/telegram/send-message/<str:phone>/<str:message>/', TelegramSendMessage.as_view(), name='send-message'),
 ]

@@ -5,9 +5,106 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home | Connector</title>
+    <style>
+        .contact-list {
+            width: 250px;
+        }
+
+        option {
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        textarea {
+            color: transparent;
+            text-shadow: 0px 0px 0px black;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
     <h1>Hello There!</h1>
     <p><a href="{% url 'logout' %}">Logout</a></p>
+    <hr>
+
+    <select id="contact-list" size="15">
+    </select>
+
+    <textarea id="chat-box" rows="35" cols="50" spellcheck="false" readonly></textarea>
+
+    <p>
+        <input type="text" id="send-message-input" placeholder="Type a message...">
+        <button id="send-message-btn">Send</button>
+    </p>
+
+    <script text="type/javascript">
+        contacts = [
+            {
+                "id": "30",
+                "name": "Dartz",
+                "phone": "me",
+            },
+        ];
+
+        var contactListEl = document.getElementById("contact-list");
+        contacts.forEach(contact => {
+            var option = document.createElement("option");
+            option.value = contact.phone;
+            option.innerHTML = `${contact.name} (${contact.phone})`;
+            option.addEventListener("click", (e) => {
+                //var contact = contacts.find(contact => contact.phone === e.target.value);
+                var xhr = new XMLHttpRequest();
+                //xhr.open("GET", `v1/telegram/chat-history-request/${contact.phone}/`);
+                xhr.open("GET", `v1/telegram/chat-history-request/${e.target.value}/`);
+                xhr.setRequestHeader("Accept", "application/json");
+                xhr.setRequestHeader("Content-Type", "application/json");
+                xhr.onload = function() {
+                    console.log(xhr.responseText);
+                };
+                xhr.send();
+            });
+            contactListEl.appendChild(option);
+        });
+
+        var sendMessageBtn = document.getElementById("send-message-btn");
+        sendMessageBtn.addEventListener("click", function() {
+            var message = document.getElementById("send-message-input").value;
+            var phone = contactListEl.value;
+            if (!phone.length) {
+                alert("Select a contact first!");
+                return;
+            }
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", `v1/telegram/send-message/${phone}/${message}/`);
+            xhr.setRequestHeader("Accept", "application/json");
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.onload = function() {
+                console.log(xhr.responseText);
+            };
+            xhr.send();
+        });
+
+        var chatBoxEl = document.getElementById("chat-box");
+        setInterval(() => {
+            var phone = contactListEl.value;
+            if (!phone.length) {
+                return;
+            }
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", `v1/telegram/chat-history-response/${phone}/`);
+            xhr.setRequestHeader("Accept", "application/json");
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.onload = function() {
+                messages = JSON.parse(xhr.responseText);
+                chatBoxEl.value = "";
+                messages.forEach(message => {
+                    chatBoxEl.value += `${message}\n`;
+                });
+            };
+            xhr.send();
+        }, 5000);
+    </script>
 </body>
 </html>

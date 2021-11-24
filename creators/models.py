@@ -11,3 +11,13 @@ class Creator(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Message(models.Model):
+    creator = models.ForeignKey(Creator, verbose_name='Creator', related_name='messages', on_delete=models.CASCADE)
+    message = models.TextField(verbose_name='Message')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Created at')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='Updated at')
+
+    def __str__(self):
+        return self.message

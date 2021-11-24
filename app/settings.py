@@ -150,5 +150,3 @@ if DEBUG:
     # This is how clients, like Thunder Client, will be able to log in.
     # A fucking custom middleware, skipping CSRF validation.
     MIDDLEWARE.append('creators.utils.DisableCSRFMiddleware')
-
-print(MIDDLEWARE)

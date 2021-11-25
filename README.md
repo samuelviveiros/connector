@@ -5,10 +5,10 @@ Mutant Interview
 
 Clone o repositório:
 
-`git clone https://github.com/samuelviveiros/connector.git`
+```git clone https://github.com/samuelviveiros/connector.git```
 
 Entre no diretório do projeto:
-`cd connector`
+```cd connector```
 
 Crie um ambiente virtual:
 `python3 -m venv env`

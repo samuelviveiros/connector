@@ -1,0 +1,25 @@
+<mxfile host="65bd71144e">
+    <diagram id="RCmpeXa5FuZNQoTwiZOh" name="Page-1">
+        <mxGraphModel dx="766" dy="647" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="4681" pageHeight="3300" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="2" value="&lt;font&gt;&amp;nbsp; Adicionar novo contato&lt;br&gt;&lt;br&gt;&amp;nbsp; Nome do criativo:&amp;nbsp; &amp;nbsp; &amp;nbsp;[ John Doe&amp;nbsp; &amp;nbsp; &amp;nbsp; ]&lt;br&gt;&amp;nbsp; Telefone do Telegram: [ +556312345678 ]&lt;br&gt;&lt;br&gt;&lt;div style=&quot;text-align: center&quot;&gt;&lt;span&gt;[ Adicionar ]&lt;/span&gt;&lt;/div&gt;&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=left;fontFamily=Courier New;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="120" width="320" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="3" value="&amp;nbsp; Luke Skywalker - +556387654321&lt;br&gt;&lt;br&gt;[ Anakin Skywalker - +556387654321&amp;nbsp; ]&lt;br&gt;&lt;br&gt;&amp;nbsp; Han Solo - +556387654321&lt;br&gt;&lt;br&gt;&amp;nbsp; Leia Organa - +556387654321" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Courier New;align=left;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="250" width="320" height="350" as="geometry"/>
+                </mxCell>
+                <mxCell id="5" value="Chatbox" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Courier New;" parent="1" vertex="1">
+                    <mxGeometry x="370" y="120" width="470" height="400" as="geometry"/>
+                </mxCell>
+                <mxCell id="6" value="Digite aqui alguma mensagem para enviar!" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Courier New;" parent="1" vertex="1">
+                    <mxGeometry x="370" y="530" width="470" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="8" value="&amp;nbsp; Olá Admin | Sair" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Courier New;align=left;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="50" width="800" height="60" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

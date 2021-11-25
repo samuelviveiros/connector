@@ -61,9 +61,9 @@ Por fim, acesse o endereço http://127.0.0.1:8080/, faça login, cadastre um con
 - Montar um stack com Django + Vunicorn/Gunicorn + PostgreSQL + Nginx
 - Configurar HTTPS com Let's Encrypt
 - Usar Websockets para facilitar o envio e recebimento de mensagens entre browser e backend
+- Pesquisar uma solução efetiva para que a aplicação consiga logar nos servidores do Telegram
 - Garantir a entrega das mensagens, caso a aplicação falhe ou a API do Telegram falhe
 - Subir vídeos para o TikTok (embora opcional)
-- Pesquisar uma solução mais efetiva para fazer a aplicação logar nos servidores do Telegram
 - Publicar a aplicação na nuvem (ou na minha VPS particular)
 
 # Abaixo segue uma imagem da página do conector:

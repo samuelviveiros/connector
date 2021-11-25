@@ -1,81 +1,229 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home | Connector</title>
     <style>
-        .contact-list {
-            width: 250px;
+        * {
+            font-family: sans-serif;
+            box-sizing: border-box;
         }
 
-        option {
+        #chatbox {
+            /* min-width: 550px; */
+            height: 100%;
+            /* height: 700px; */
+            overflow-y: auto;
+            overflow-x: hidden;
+            border: 1px solid #ccc;
             padding: 10px;
+            background-image: url(images/pink-bg-640.png);
+            background-size: 200px;
+        }
+
+        .dialog-ballon-left, .dialog-ballon-right {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            overflow: auto;
+            /* border: 1px solid black; */
+        }
+
+        .dialog-ballon-left div, .dialog-ballon-right div {
+            margin-right: 10px;
+            background-color: #fff;
+            box-shadow: 0 0 5px #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            max-width: 500px;
+        }
+
+        .dialog-ballon-right div {
+            background-color: #dcf8c6;
+            float: right;
+        }
+
+        .dialog-ballon-left div {
+            background-color: #ffffff;
+            float: left;
+        }
+
+        #textbox {
+            resize: none;
+            overflow: hidden;
+            min-height: 50px;
+            max-height: 100px;
+            border: 1px solid #ccc;
+            outline: none;
+            width: 100%;
+            height: 100%;
+        }
+
+        #container-chat-area {
+            display: flex;
+            flex-direction: row;
+            height: 700px;
+            width: 1024px;
+        }
+
+        #container-messages {
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #ccc;
+        }
+
+        #container-contacts {
+            display: flex;
+            flex-direction: column;
+            width: 400px;
+        }
+
+        #contact-register {
+            /* height: 30%; */
+            padding: 10px;
+            height: 20%;
+            border: 1px solid #ccc;
+        }
+
+        #contact-list {
+            overflow-y: auto;
+            flex-direction: column;
+            display: flex;
+            height: 80%;
+            border: 1px solid #ccc;
+        }
+
+        #contact-list div {
+            padding: 10px;
+            /* background-color: #eaa; */
+            border: 1px solid #ccc;
             cursor: pointer;
         }
 
-        textarea {
-            color: transparent;
-            text-shadow: 0px 0px 0px black;
-            cursor: pointer;
+        /* #contact-list div:hover {
+            background-color: dodgerblue;
+        } */
+
+        #container-chatbox {
+            height: 100%;
         }
+
+        #container-textbox {
+            height: 100px;
+        }
+
+        .contact-selected {
+            background-color: red;
+        }
+
+        #btn-add {
+            width: 75px;
+            height: 30px;
+        }
+
+        /* div {
+            border: 1px solid black;
+        } */
     </style>
 </head>
 <body>
-    <h1>Hello There!</h1>
     <p><a href="{% url 'logout' %}">Logout</a></p>
-    <hr>
 
-    <select id="contact-list" size="15">
-    </select>
 
-    <textarea id="chat-box" rows="35" cols="50" spellcheck="false" readonly></textarea>
+    <div id="container-chat-area">
+        <div id="container-contacts">
+            <div id="contact-register">
+                <p><input type="text" id="name-field" placeholder="Name"></p>
+                <p><input type="text" id="phone-field" placeholder="Phone"></p>
+                <p><button id="btn-add">Add</button></p>
+            </div>
+            <div id="contact-list">
+                    <!-- <div>Contact 1</div>
+                    <div>Contact 2</div> -->
+            </div>
+        </div>
+        <div id="container-messages" style="width: 100%">
+            <div id="chatbox">
+            </div>
+            <div id="container-textbox">
+                <textarea id="textbox" placeholder="Type a message" spellcheck="false"></textarea>
+            </div>
+        </div>
+    </div>
 
-    <p>
-        <input type="text" id="send-message-input" placeholder="Type a message...">
-        <button id="send-message-btn">Send</button>
-    </p>
+    <script type="text/javascript">
+        //
+        // Variável global que armazena o contato selecionado
+        //
+        const selectedContact = {
+            name: null,
+            phone: null,
+            el: null,
+        };
 
-    <script text="type/javascript">
-        contacts = [
-            {
-                "id": "30",
-                "name": "Dartz",
-                "phone": "me",
-            },
-        ];
+        //
+        // Define a classe `DialogBallon`
+        //
+        function DialogBallon(text, side) {
+            this.text = text;
+            this.side = side;
 
-        var contactListEl = document.getElementById("contact-list");
-        contacts.forEach(contact => {
-            var option = document.createElement("option");
-            option.value = contact.phone;
-            option.innerHTML = `${contact.name} (${contact.phone})`;
-            option.addEventListener("click", (e) => {
-                //var contact = contacts.find(contact => contact.phone === e.target.value);
-                var xhr = new XMLHttpRequest();
-                //xhr.open("GET", `v1/telegram/chat-history-request/${contact.phone}/`);
-                xhr.open("GET", `v1/telegram/chat-history-request/${e.target.value}/`);
-                xhr.setRequestHeader("Accept", "application/json");
-                xhr.setRequestHeader("Content-Type", "application/json");
-                xhr.onload = function() {
-                    console.log(xhr.responseText);
-                };
-                xhr.send();
-            });
-            contactListEl.appendChild(option);
+            this._divContainer = document.createElement("div");
+            this._divContainer.className = `dialog-ballon-${this.side}`;
+
+            this._divBallon = document.createElement("div");
+            this._divBallon.innerHTML = this.text;
+
+            this._divContainer.appendChild(this._divBallon);
+        }
+
+        DialogBallon.prototype.getEl = function() {
+            return this._divContainer;
+        }
+
+        //
+        // Configura o `textbox` para adicionar uma mensagem no `chatbox`
+        //
+        const textbox = document.getElementById('textbox');
+        textbox.addEventListener('input', function(e) {
+            e.target.style.height = "5px";
+            e.target.style.height = `${e.target.scrollHeight}px`;
         });
 
-        var sendMessageBtn = document.getElementById("send-message-btn");
-        sendMessageBtn.addEventListener("click", function() {
-            var message = document.getElementById("send-message-input").value;
-            var phone = contactListEl.value;
-            if (!phone.length) {
-                alert("Select a contact first!");
-                return;
-            }
+        function addMessageToChatbox(text, side) {
+            text = text.replace(/\n/g, '<br>')
+            var dialogBallon = new DialogBallon(text, side);
+            chatbox.appendChild(dialogBallon.getEl());
+            chatbox.scrollTop = chatbox.scrollHeight;
+        }
 
-            var xhr = new XMLHttpRequest();
+        function clearTextbox() {
+            textbox.value = "";
+            textbox.style.height = "5px";
+        }
+
+        // Break line on press ctrl + enter
+        textbox.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.keyCode === 13) {
+                textbox.value += '\n';
+            }
+        });
+
+        // Ao pressionar enter:
+        //   - adiciona a mensagem no `chatbox`
+        //   - envia a mensagem para o backend
+        //   - limpa o `textbox`
+        textbox.addEventListener('keyup', function(e) {
+            if (!e.ctrlKey && e.keyCode === 13 && textbox.value.trim() !== "" && selectedContact.phone) {
+                addMessageToChatbox(textbox.value, "right");
+                telegramSendMessage(selectedContact.phone, textbox.value);
+                clearTextbox();
+            }
+        });
+
+        // Envia uma mensagem para a conta Telegram do contato selecionado
+        function telegramSendMessage(phone, message) {
+            const xhr = new XMLHttpRequest();
             xhr.open("POST", `v1/telegram/send-message/${phone}/${message}/`);
             xhr.setRequestHeader("Accept", "application/json");
             xhr.setRequestHeader("Content-Type", "application/json");
@@ -83,28 +231,191 @@
                 console.log(xhr.responseText);
             };
             xhr.send();
-        });
+        }
 
-        var chatBoxEl = document.getElementById("chat-box");
-        setInterval(() => {
-            var phone = contactListEl.value;
-            if (!phone.length) {
-                return;
-            }
+        // Requisita ao backend para que consiga a lista
+        // de mensagens do contato selecionado
+        function telegramRequestChatHistory(phone) {
+            const xhr = new XMLHttpRequest();
+            xhr.open("GET", `v1/telegram/chat-history-request/${phone}/`);
+            xhr.setRequestHeader("Accept", "application/json");
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.onload = function() {
+                console.log(xhr.responseText);
+            };
+            xhr.send();
+        }
 
-            var xhr = new XMLHttpRequest();
+        // Verifica se o backend já conseguiu a lista de
+        // mensagens do contato selecionado
+        function telegramChatHistoryResponse(phone) {
+            const xhr = new XMLHttpRequest();
             xhr.open("GET", `v1/telegram/chat-history-response/${phone}/`);
             xhr.setRequestHeader("Accept", "application/json");
             xhr.setRequestHeader("Content-Type", "application/json");
             xhr.onload = function() {
+                telegramRequestChatHistory(phone);
                 messages = JSON.parse(xhr.responseText);
-                chatBoxEl.value = "";
+                while (chatbox.firstChild) {
+                    chatbox.removeChild(chatbox.firstChild);
+                }
                 messages.forEach(message => {
-                    chatBoxEl.value += `${message}\n`;
+                    addMessageToChatbox(message.text, message.side);
                 });
             };
             xhr.send();
+        }
+
+        // A cada 5 segundos, obtém uma lista atualizada
+        // de mensagens do contato selecionado
+        setInterval(() => {
+            if (!selectedContact.phone) {
+                return;
+            }
+
+            telegramChatHistoryResponse(selectedContact.phone);
         }, 5000);
+
+        //
+        // Prepara a lista de contatos
+        //
+        const constactList = document.getElementById('contact-list');
+
+        class Contact {
+            constructor(name, phone) {
+                this.name = name;
+                this.phone = phone;
+                this._onClick = null;
+                this._onMouseOver = null;
+                this._onMouseOut = null;
+
+                this.element = document.createElement("div");
+                this.element.innerText = `${this.name} (${this.phone})`;
+
+                this.element.addEventListener('click', (e) => {
+                    if (this._onClick) {
+                        this._onClick(this, e);
+                    }
+                });
+
+                this.element.addEventListener('mouseover', (e) => {
+                    if (this._onMouseOver) {
+                        this._onMouseOver(this, e);
+                    }
+                });
+
+                this.element.addEventListener('mouseout', (e) => {
+                    if (this._onMouseOut) {
+                        this._onMouseOut(this, e);
+                    }
+                });
+            }
+
+            getEl() {
+                return this.element;
+            }
+
+            onClick(fn) {
+                this._onClick = fn;
+            }
+
+            onMouseOver(fn) {
+                this._onMouseOver = fn;
+            }
+
+            onMouseOut(fn) {
+                this._onMouseOut = fn;
+            }
+
+            saveToDB(cfg) {
+                cfg = cfg || {};
+                cfg.scope = cfg.scope || window;
+                cfg.success = cfg.success || function() {};
+
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', 'v1/creators/');
+                xhr.setRequestHeader("Accept", "application/json");
+                xhr.setRequestHeader("Content-Type", "application/json");
+                xhr.send(JSON.stringify({
+                    name: this.name,
+                    phone: this.phone,
+                }));
+                xhr.onload = function() {
+                    cfg.success.call(cfg.scope, xhr.responseText);
+                };
+            }
+        }
+
+        function contactClickHandler (obj, e) {
+            if (selectedContact.el) {
+                selectedContact.el.style.backgroundColor = "";
+            }
+            obj.getEl().style.backgroundColor = "teal";
+
+            selectedContact.name = obj.name;
+            selectedContact.phone = obj.phone;
+            selectedContact.el = obj.getEl();
+            console.info('Selected:', selectedContact);
+
+            telegramChatHistoryResponse(selectedContact.phone);
+        }
+
+        function contactMouseOverHandler (obj, e) {
+            obj.getEl().style.backgroundColor = "rgb(135, 220, 220)";
+        }
+
+        function contactMouseOutHandler (obj, e) {
+            if (selectedContact.el === obj.getEl()) {
+                obj.getEl().style.backgroundColor = "teal";
+            } else {
+                obj.getEl().style.backgroundColor = "";
+            }
+        }
+
+        // Requisita ao backend a lista de contatos
+        (function requestContactList() {
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', 'v1/creators/');
+            xhr.setRequestHeader("Accept", "application/json");
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.send();
+            xhr.onload = function() {
+                const contacts = JSON.parse(xhr.responseText);
+                contacts.forEach(function(contact) {
+                    const contactObj = new Contact(contact.name, contact.phone);
+                    contactObj.onClick(contactClickHandler);
+                    contactObj.onMouseOver(contactMouseOverHandler);
+                    contactObj.onMouseOut(contactMouseOutHandler);
+                    constactList.appendChild(contactObj.getEl());
+                });
+            };
+        })();
+
+        // Configura o cadastro de contatos
+        const btnAdd = document.getElementById('btn-add');
+        const nameField = document.getElementById('name-field');    
+        const phoneField = document.getElementById('phone-field');
+        btnAdd.addEventListener('click', function(e) {
+            if (!(nameField.value && phoneField.value)) {
+                alert('Preencha os campos corretamente!');
+                return;
+            }
+            const contactObj = new Contact(nameField.value, phoneField.value);
+            contactObj.saveToDB({
+                success: function(response) {
+                    contact = JSON.parse(response);
+                    console.info('Added contact:', contact);
+
+                    contactObj.onClick(contactClickHandler);
+                    contactObj.onMouseOver(contactMouseOverHandler);
+                    contactObj.onMouseOut(contactMouseOutHandler);
+                    constactList.appendChild(contactObj.getEl());
+
+                    nameField.value = "";
+                    phoneField.value = "";
+                }
+            });
+        });
     </script>
 </body>
 </html>

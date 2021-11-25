@@ -65,10 +65,6 @@ class CustomEndpoint(APIView):
         return Response({"ObiWanSaid": "Hello There!"})
 
 
-async def telegram_send_message(client, phone, message):
-    await client.send_message(phone, message)
-
-
 #
 # Obter o histórico de chat vai ser complicado. Primeiro porque
 # a função a seguir é assíncrona. Devido a esse fato, assim que
@@ -90,10 +86,15 @@ async def telegram_send_message(client, phone, message):
 #
 async def telegram_chat_history(client, phone):
     messages = []
+    me = await client.get_me()
 
     async for message in client.iter_messages(phone):
         text = '[FILE]' if message.media else message.text
-        messages.insert(0, f'{message.sender.username or message.sender.last_name or phone}: {text}')
+        side = 'right' if message.sender == me else 'left'
+        messages.insert(0, {
+            'text': text,
+            'side': side,
+        })
 
     await telegram_chat_history_to_db(phone, messages)
 
@@ -107,9 +108,12 @@ def telegram_chat_history_to_db(phone, messages):
 
     with transaction.atomic():
         creator.messages.all().delete()
-
         creator.messages.bulk_create([
-            Message(creator=creator, message=message) for message in messages
+            Message(
+                creator=creator,
+                text=message['text'],
+                side=message['side']
+            ) for message in messages
         ])
 
         # transaction.on_commit(lambda: print_messages())
@@ -127,6 +131,16 @@ class ChatHistoryRequest(APIView):
         })
 
 
+class ChatHistoryResponse(APIView):
+    def get(self, request, phone):
+        messages = Creator.objects.get(phone=phone).messages.values('text', 'side')
+        return Response(messages)
+
+
+async def telegram_send_message(client, phone, message):
+    await client.send_message(phone, message)
+
+
 class TelegramSendMessage(APIView):
     def post(self, request, phone, message):
         client = tg.TelegramClient('telegram.session', api_id, api_hash, loop=get_new_loop())
@@ -140,10 +154,3 @@ class TelegramSendMessage(APIView):
             "message": message,
             "telethon": tg.__version__,
         })
-
-
-class ChatHistoryResponse(APIView):
-    def get(self, request, phone):
-        messages = Creator.objects.get(phone=phone).messages.values('message')
-        messages = map(lambda d: d['message'], messages)
-        return Response(messages)

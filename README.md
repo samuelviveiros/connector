@@ -29,22 +29,22 @@ pip install --upgrade pip
 pip install -U -r requirements.txt
 ```
 
-Crie um arquivo .env com o conteúdo a seguir (substitua os valores onde for necessário):
+Crie um arquivo `.env` com o conteúdo a seguir (substitua os valores onde for necessário):
 
 ```bash
-SECRET_KEY=coloque-alguma-chave-secreta-do-django-aqui
+SECRET_KEY=put-in-here-some-django-secret-key
 API_ID=put-your-telegram-api-id-here
 API_HASH=put-your-telegram-api-hash-here
 PHONE=+556312345678
 ```
 
-Para obter um API_ID e API_HASH basta acessar o endereço do Telegram https://my.telegram.org/.
+Para obter um `API_ID` e `API_HASH` basta acessar o endereço do Telegram https://my.telegram.org/.
 
 Tendo configurado as variáveis de ambiente, execute o script a seguir. Esse script irá gerar um arquivo de sessão de login do Telegram na pasta raíz do projeto. Ao executá-lo, será solicitado a você um número de telefone que você utiliza no Telegram. Logo após fornecer o número de telefone, será enviado para a sua conta Telegram um código de login (basta acessar o Telegram no seu smartphone para visualizar), que você fornecerá para o script quando ele solicitar o código:
 
 ```bash
-chmod u+x generate_telegram_session.py
-./generate_telegram_session.py
+chmod u+x start_telegram_session.py
+./start_telegram_session.py
 ```
 
 Execute os comandos do Django abaixo:

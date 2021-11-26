@@ -44,9 +44,11 @@ INSTALLED_APPS = [
 
     # Third-party apps
     'rest_framework',
+    'channels',
 
     # Local apps
     'creators',
+    'chat',
 ]
 
 MIDDLEWARE = [
@@ -80,6 +82,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'app.wsgi.application'
+ASGI_APPLICATION = 'app.asgi.application'
 
 
 # Database

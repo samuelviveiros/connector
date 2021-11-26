@@ -1,7 +1,9 @@
 import asyncio
 import os
 
+# asgiref 3.4.1 is causing issues. See: https://stackoverflow.com/a/68553668/16196935
 from asgiref.sync import sync_to_async
+
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
@@ -20,7 +22,17 @@ api_id = os.getenv('API_ID')
 api_hash = os.getenv('API_HASH')
 
 
-def get_new_loop():
+# def get_event_loop():
+#     if hasattr(get_event_loop, '_loop'):
+#         return getattr(get_event_loop, '_loop')
+
+#     loop = asyncio.new_event_loop()
+#     asyncio.set_event_loop(loop)
+
+#     setattr(get_event_loop, '_loop', loop)
+#     return loop
+
+def get_new_event_loop():
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     return loop
@@ -83,6 +95,7 @@ class CustomEndpoint(APIView):
 # uma mensagem contendo o resultado será enviada para o browser.
 # Essa seria a solução mais sofisticada, porém mais complicada
 # de implementar.
+# 3) HTTP long polling. Pesquisar sobre isso.
 #
 async def telegram_chat_history(client, phone):
     messages = []
@@ -121,7 +134,7 @@ def telegram_chat_history_to_db(phone, messages):
 
 class ChatHistoryRequest(APIView):
     def get(self, request, phone):
-        client = tg.TelegramClient('telegram.session', api_id, api_hash, loop=get_new_loop())
+        client = tg.TelegramClient('telegram.session', api_id, api_hash, loop=get_new_event_loop())
         with client:
             client.loop.run_until_complete(telegram_chat_history(client, phone))
 
@@ -143,7 +156,7 @@ async def telegram_send_message(client, phone, message):
 
 class TelegramSendMessage(APIView):
     def post(self, request, phone, message):
-        client = tg.TelegramClient('telegram.session', api_id, api_hash, loop=get_new_loop())
+        client = tg.TelegramClient('telegram.session', api_id, api_hash, loop=get_new_event_loop())
         with client:
             client.loop.run_until_complete(
                 telegram_send_message(client, phone, message)

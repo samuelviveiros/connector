@@ -5,3 +5,8 @@ djangorestframework>=3.12.4
 Markdown>=3.3.6
 django-filter>=21.1
 Telethon>=1.23.0
+channels>=3.0.4
+
+# Version 3.4.1 is causing a deadlock issue when we call sync_to_async:
+# https://stackoverflow.com/a/68553668/16196935
+#asgiref==3.3.4

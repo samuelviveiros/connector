@@ -153,3 +153,12 @@ if DEBUG:
     # This is how clients, like Thunder Client, will be able to log in.
     # A fucking custom middleware, skipping CSRF validation.
     MIDDLEWARE.append('creators.utils.DisableCSRFMiddleware')
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [('127.0.0.1', 6379)],
+        },
+    },
+}

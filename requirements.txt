@@ -15,3 +15,6 @@ channels-redis>=3.3.1
 # Version 3.4.1 is causing a deadlock issue when we call sync_to_async:
 # https://stackoverflow.com/a/68553668/16196935
 #asgiref==3.3.4
+
+# daphne -b 127.0.0.1 -p 8081 app.asgi:application
+daphne>=3.0.2
